@@ -182,9 +182,112 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
         .bg-yellow { background: rgba(234, 179, 8, 0.1); color: #eab308; }
 
         .btn-sm { padding: 8px 14px; border-radius: 8px; font-size: 0.8rem; text-decoration: none; display:inline-block; font-weight:600; }
+        /* --- PRELOADER STYLES --- */
+#page-loader {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-body); /* Matches your theme */
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.5s ease, visibility 0.5s;
+}
+
+.loader-wrapper {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* The Bus Icon */
+.loader-wrapper i {
+    font-size: 2.5rem;
+    color: var(--primary);
+    z-index: 10;
+}
+
+/* The Spinning Blue Circle */
+.spinning-ring {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top: 3px solid var(--primary); /* The blue part */
+    border-right: 3px solid var(--primary);
+    animation: spin 1s linear infinite;
+}
+
+/* Glow Effect around the ring */
+.spinning-ring::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 3px solid var(--primary);
+    opacity: 0.2;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Class to hide the loader */
+.loader-hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+#page-loader {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-body);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Faster transition */
+    transition: opacity 0.3s ease-out; 
+}
+
+.loader-wrapper {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* The Spinning Blue Circle - increased speed to match the fast fade */
+.spinning-ring {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top: 3px solid var(--primary);
+    border-right: 3px solid var(--primary);
+    animation: spin 0.6s linear infinite; /* Faster spin */
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
     </style>
 </head>
 <body>
+    <div id="page-loader">
+    <div class="loader-wrapper">
+        <i class="ph-fill ph-bus"></i>
+        <div class="spinning-ring"></div>
+    </div>
+</div>
 
     <div class="sidebar">
         <a href="#" class="brand">
@@ -419,6 +522,29 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
         if(savedTheme === 'dark') document.getElementById('theme-icon').classList.replace('ph-moon', 'ph-sun');
+        window.addEventListener("load", function() {
+    const loader = document.getElementById("page-loader");
+    // Add a slight delay so people can actually see the cool animation
+    setTimeout(() => {
+        loader.classList.add("loader-hidden");
+    }, 800); 
+});
+// Fires as soon as the basic page structure is ready
+document.addEventListener("DOMContentLoaded", function() {
+    const loader = document.getElementById("page-loader");
+    
+    // Short delay for a professional "blink" effect
+    setTimeout(() => {
+        loader.style.opacity = "0";
+        loader.style.pointerEvents = "none"; // Allows clicking through immediately
+        
+        // Fully remove from DOM so it doesn't eat CPU
+        setTimeout(() => {
+            loader.style.display = "none";
+        }, 300); 
+    }, 300); // 0.3 seconds total wait time
+});
+
     </script>
 </body>
 </html>
